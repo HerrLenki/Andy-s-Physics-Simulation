@@ -1,10 +1,12 @@
 import math
 
 planet_list = [] #name
+moon_list = [] #name
 species_list = [] #name
 star_list = [] #name
 black_hole_list = []#name
-planet_description_list = [] #type, life, orbit object, orbit radius
+planet_description_list = [] #type, life, mass, orbit object, orbit period
+moon_description_list = [] # mass, radius, orbit object, orbit period
 species_description_list = [] #lifespan
 star_description_list = [] #radius, temperature, mass
 black_hole_description_list = [] #radius, mass
@@ -42,12 +44,37 @@ while True:
                     orbit_period = (math.sqrt((4*math.pow(math.pi, 2)*math.pow(float(orbit_distance), 3)) / ((6.674 * math.pow(10, -11)) * float(star_mass)))) / 60 / 60 / 24
                     try: #add the planet details into the corresponding lists
                         planet_list.append(planet_name)
-                        planet_description_list.extend([planet_type, planet_life, orbit_object, planet_mass])
+                        planet_description_list.extend([planet_type, planet_life, planet_mass, orbit_object, orbit_period])
                         print("\n" + "You created the following planet, that orbits around " + orbit_object + ":" + "\n" + "name: " + planet_name + "\n" + "type: " + planet_type + "\n" + "life: " + planet_life + "\n" + "orbital period: " + str(orbit_period) + "\n" + "mass: " + planet_mass)
                     except:
                         print("Error occured")
                 else: #if no star was created prior to the attempt to create a planet
                     print("You have to create a star or a black hole before creating a planet.")
+
+            case "Moon" | "moon":
+                if planet_list != []: #if a planet exists
+                    moon_name = input("What is the name of the moon?: ")#name
+                    moon_mass = input("What is the mass of the moon?: ") #mass
+                    moon_size = input("What is the radius of the moon?: ") #radius
+                    print(("\n" * 2) + "The moon has to orbit a planet.")
+                    print("\n" + "Here is a list of the planets:" + "\n" + ", ".join(planet_list)) #displays list of planets
+                    orbit_object = input("What planet does the moon orbit around?: ") #asks for the orbit object
+
+                    planet_mass = 0.0 #introduces the planet_mass variable
+                    for i in range(len(planet_list)): #search for the orbit object in planet_list and change the planet_mass according to the data
+                        if planet_list[i] == orbit_object:
+                            planet_mass = planet_description_list[2 + 5*i]
+                            break
+
+                    orbit_radius = input("What is the distance between the moon and the planet?: ") #asks for the distance between moon and planet
+                    #calculates length of a year on the moon
+                    orbit_period = (math.sqrt((4*math.pow(math.pi, 2)*math.pow(float(orbit_distance), 3)) / ((6.674 * math.pow(10, -11)) * float(planet_mass)))) / 60 / 60 / 24                
+                    
+                    moon_list.append(moon_name) #adds moon to the list
+                    moon_list.extend([moon_mass, moon_size, orbit_object, orbit_period]) #adds the moon details to the corresponding list
+                    print("You created the following moon, that orbits around " + orbit_object + "with a distance of " + orbit_radius)
+                    print("name:", moon_name, "\n" + "mass:", moon_mass, "\n" + "radius:", moon_size)
+
 
             case "Life" | "life" | "Species" | "species": #create a species
                 species_name = input("What is the species called?: ") #name
