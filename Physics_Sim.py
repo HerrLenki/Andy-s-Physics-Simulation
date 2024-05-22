@@ -1,12 +1,15 @@
 import math
 
+orbit_list = [] #orbit radius
 planet_list = [] #name
 moon_list = [] #name
+belt_list = [] #name
 species_list = [] #name
 star_list = [] #name
 black_hole_list = []#name
 planet_description_list = [] #type, life, mass, orbit object, orbit period
 moon_description_list = [] # mass, radius, orbit object, orbit period
+belt_description_list = [] #width, orbit object, orbit radius
 species_description_list = [] #lifespan
 star_description_list = [] #radius, temperature, mass
 black_hole_description_list = [] #radius, mass
@@ -31,23 +34,28 @@ while True:
                     orbit_object = input("What object does the planet rotate around?: ") #asks what the star or black hole, the planet orbits around, is
                     orbit_distance = input("What is the distance between " + planet_name + " and " + orbit_object + "?: ") #asks for the distance between the planet and the star
                     
-                    star_mass = 0 #introduces a variable for the mass of the star
-                    for i in range(len(star_list) + len(black_hole_list)): #find the star or black hole and its values in the lists
-                        if star_list[i] == orbit_object:
-                            star_mass = star_description_list[2 + 3*i]
-                            break 
-                        if black_hole_list[i] == orbit_object:
-                            star_mass = black_hole_description_list[1 + 2*i]
-                            break
+                    if "".join(orbit_list).find(orbit_distance) == -1:
+                        star_mass = 0 #introduces a variable for the mass of the star
+                        for i in range(len(star_list) + len(black_hole_list)): #find the star or black hole and its values in the lists
+                            if star_list[i] == orbit_object:
+                                star_mass = star_description_list[2 + 3*i]
+                                break 
+                            if black_hole_list[i] == orbit_object:
+                                star_mass = black_hole_description_list[1 + 2*i]
+                                break
 
-                    #calculating the orbital period with sqrt[4*pi*r^3 / G * M] and converts the result into days
-                    orbit_period = (math.sqrt((4*math.pow(math.pi, 2)*math.pow(float(orbit_distance), 3)) / ((6.674 * math.pow(10, -11)) * float(star_mass)))) / 60 / 60 / 24
-                    try: #add the planet details into the corresponding lists
-                        planet_list.append(planet_name)
-                        planet_description_list.extend([planet_type, planet_life, planet_mass, orbit_object, orbit_period])
-                        print("\n" + "You created the following planet, that orbits around " + orbit_object + ":" + "\n" + "name: " + planet_name + "\n" + "type: " + planet_type + "\n" + "life: " + planet_life + "\n" + "orbital period: " + str(orbit_period) + "\n" + "mass: " + planet_mass)
-                    except:
-                        print("Error occured")
+                        #calculating the orbital period with sqrt[4*pi*r^3 / G * M] and converts the result into days
+                        orbit_period = (math.sqrt((4*math.pow(math.pi, 2)*math.pow(float(orbit_distance), 3)) / ((6.674 * math.pow(10, -11)) * float(star_mass)))) / 60 / 60 / 24
+                        try: #add the planet details into the corresponding lists
+                            planet_list.append(planet_name)
+                            planet_description_list.extend([planet_type, planet_life, planet_mass, orbit_object, orbit_period])
+                            orbit_list.append(orbit_distance)
+                            print("\n" + "You created the following planet, that orbits around " + orbit_object + ":" + "\n" + "name: " + planet_name + "\n" + "type: " + planet_type + "\n" + "life: " + planet_life + "\n" + "orbital period: " + str(orbit_period) + "\n" + "mass: " + planet_mass)
+                        except:
+                            print("Error occured")
+                    if "".join(orbit_list).find(orbit_distance) != -1:
+                        print("There is already an object on this orbit")
+
                 else: #if no star was created prior to the attempt to create a planet
                     print("You have to create a star or a black hole before creating a planet.")
 
@@ -67,14 +75,40 @@ while True:
                             break
 
                     orbit_radius = input("What is the distance between the moon and the planet?: ") #asks for the distance between moon and planet
-                    #calculates length of a year on the moon
-                    orbit_period = (math.sqrt((4*math.pow(math.pi, 2)*math.pow(float(orbit_distance), 3)) / ((6.674 * math.pow(10, -11)) * float(planet_mass)))) / 60 / 60 / 24                
+                    if "".join(orbit_list).find(orbit_radius) == -1:
+                        #calculates length of a year on the moon
+                        orbit_period = (math.sqrt((4*math.pow(math.pi, 2)*math.pow(float(orbit_distance), 3)) / ((6.674 * math.pow(10, -11)) * float(planet_mass)))) / 60 / 60 / 24                
                     
-                    moon_list.append(moon_name) #adds moon to the list
-                    moon_list.extend([moon_mass, moon_size, orbit_object, orbit_period]) #adds the moon details to the corresponding list
-                    print("You created the following moon, that orbits around " + orbit_object + "with a distance of " + orbit_radius)
-                    print("name:", moon_name, "\n" + "mass:", moon_mass, "\n" + "radius:", moon_size)
+                        moon_list.append(moon_name) #adds moon to the list
+                        moon_list.extend([moon_mass, moon_size, orbit_object, orbit_period]) #adds the moon details to the corresponding list
+                        orbit_list.append(orbit_radius)
+                        print("You created the following moon, that orbits around " + orbit_object + "with a distance of " + orbit_radius)
+                        print("name:", moon_name, "\n" + "mass:", moon_mass, "\n" + "radius:", moon_size)
+                    if "".join(orbit_list).find(orbit_radius) != -1:
+                        print("There is already an object on this orbit")
+                else:
+                    print("You have to create a planet, before you create a moon.")
 
+            case "Asteroid Belt" | "asteroid belt" | "Asteroid belt" | "Asteroidbelt":
+                if star_list != [] or black_hole_list != [] or planet_list != []:
+                    belt_name = input("What is the name of the asteroid belt?: ")
+                    belt_width = input("What is the width of the asteroid belt?: ")
+
+                    print("The asteroid belt has to orbit a star, black hole or planet.")
+                    print("Here is a list of the available objects:")
+                    print(", ".join(star_list) + ", ".join(black_hole_list) + ", ".join(planet_list))
+                    orbit_object = input("What object does the asteroid belt orbit around?: ")
+                    orbit_radius = input("What is the distance between the asteroid belt and the object?: ")
+                    if "".join(orbit_list).find(orbit_radius) == -1:
+                        print("You created the following asteroid belt", belt_name, "that orbits around", orbit_object, "with a distance of", orbit_radius + ".")
+                        print("name:", belt_name + "\n" + "width:", belt_width)
+                        belt_list.append(belt_name)
+                        belt_description_list.extend([belt_width, orbit_object, orbit_radius])
+                        orbit_list.append(orbit_radius)
+                    if "".join(orbit_list).find(orbit_radius) != -1:
+                        print("There is already an object on this orbit")
+                else:
+                    print("You have to create a star, a black hole or a planet, before you can create an asteroid belt.")
 
             case "Life" | "life" | "Species" | "species": #create a species
                 species_name = input("What is the species called?: ") #name
@@ -121,11 +155,40 @@ while True:
                         destroy_index = i
                         break
                 planet_list.pop(0 + destroy_index) #remove the planet name from the planet_list
-                planet_description_list.pop(0 + 4 * destroy_index) #removes the details of the planet from the corresponding list
-                planet_description_list.pop(0 + 4 * destroy_index)
-                planet_description_list.pop(0 + 4 * destroy_index)
-                planet_description_list.pop(0 + 4 * destroy_index)
+                planet_description_list.pop(0 + 5 * destroy_index) #removes the details of the planet from the corresponding list
+                planet_description_list.pop(0 + 5 * destroy_index)
+                planet_description_list.pop(0 + 5 * destroy_index)
+                planet_description_list.pop(0 + 5 * destroy_index)
                 print("The planet was successfully destroyed.")
+            
+            case "Moon" | "moon":
+                print("Here is a list of the available moons:" + "\n" + ", ".join(moon_list))
+                destroy_object = input("Which moon do you want to destroy?: ")
+                destroy_index = 0
+                for i in range(len(moon_list)):
+                    if moon_list[i] == destroy_object:
+                        destroy_index = i
+                        break
+                planet_list.pop(0 + destroy_index)
+                planet_description_list.pop(0 + 4*destroy_index)
+                planet_description_list.pop(0 + 4*destroy_index)
+                planet_description_list.pop(0 + 4*destroy_index)
+                planet_description_list.pop(0 + 4*destroy_index)
+                print("The moon was successfully destroyed.")
+
+            case "Asteroid Belt" | "asteroid belt" | "Asteroid belt" | "Asteroidbelt":
+                print("Here is a list of the available asteroid belts:" + "\n" + ", ".join(belt_list))
+                destroy_object = input("Which asteroid belt do you want to destroy?: ")
+                destroy_index = 0
+                for i in range(len(belt_list)):
+                    if belt_list[i] == destroy_object:
+                        destroy_index = i
+                        break
+                belt_list.pop(0 + destroy_index)
+                belt_description_list.pop(0 + 3*destroy_index)
+                belt_description_list.pop(0 + 3*destroy_index)
+                belt_description_list.pop(0 + 3*destroy_index)
+                print("The asteroid belt was successfully destroyed.")
 
             case "Species" | "species" | "Life" | "life": #if you choose to destroy a species
                 print("Here is a list of the available species:")
@@ -183,22 +246,56 @@ while True:
                         break
                 try:
                     print("Here is the requested info regarding " + planet_to_check) #displays the requested information about the planet
-                    print("type: " + planet_description_list[0 + 4 * planet_index])
-                    print("life: " + planet_description_list[1 + 4 * planet_index])
+                    print("type: " + planet_description_list[0 + 5 * planet_index])
+                    print("life: " + planet_description_list[1 + 5 * planet_index])
                 except:
                     print("Error occured")
+            
+            case "Moon" | "moon":
+                print("Here is a list of the currently available moons:" + "\n" + ", ".join(moon_list))
+                moon_to_check = input("What moon do you want to know more about?: ")
+                moon_index = 0
+                for i in range(len(moon_list)):
+                    if moon_list[i] == moon_to_check:
+                        moon_index = i
+                        break
+                try:
+                    print("Here is the requested info regarding", moon_to_check)
+                    print("mass:", moon_description_list[0 + 4*moon_index])
+                    print("radius:", moon_description_list[1 + 4*moon_index])
+                    print("orbit object:", moon_description_list[2 + 4*moon_index])
+                    print("year length:", moon_description_list[3 + 4*moon_index])
+                except:
+                    print("Error occured")
+
+            case "Asteroid Belt" | "asteroid belt" | "Asteroid belt" | "Asteroidbelt":
+                print("Here is a list of the currently available asteroid belts" + "\n" + ", ".join(belt_list))
+                belt_to_check = input("What asteroid belt do you want to know more about?: ")
+                belt_index = 0
+                for i in range(len(belt_list)):
+                    if belt_list[i] == belt_to_check:
+                        belt_index = i
+                        break
+                try:
+                    print("Here is the requested info regarding", belt_to_check)
+                    print("width:", belt_description_list[0 + 3*belt_index])
+                    print("orbit object:", belt_description_list[1 + 3*belt_index])
+                    print("orbit radius:", belt_description_list[2 + 3*belt_index])
+                except:
+                    print("Error occured")
+
 
             case "Species" | "species" | "Life" | "life": #if you want to know more about a planet
                 print("Here is a list of the currently available species: " + "\n" + ", ".join(species_list)) #displays a list of the available species
                 species_to_check = input("What species do you want to know more about?: ") #asks for the specific species you want to know more about
                 species_index = 0 #introduces the species_index variable
                 for i in range(len(species_list)): #searches for the species in the species_list
-                    if species_list == species_to_check:
+                    if species_list[i] == species_to_check:
                         species_index = i
                         break
                 try:
                     print("Here is the requested info regarding " + species_to_check) #displays the requested information about the species
-                    print("lifespan: " + species_description_list[0 + i])
+                    print("lifespan: " + species_description_list[0 + species_index])
                 except:
                     print("Error occured")
             
